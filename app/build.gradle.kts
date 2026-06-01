@@ -59,10 +59,20 @@ android {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
+        // Allow BlackBox native libs to coexist
+        jniLibs {
+            useLegacyPackaging = true
+        }
     }
+
+    // Note: When building BlackBox from source, set ndkVersion = "29.0.13846066"
+    // The pre-built AAR does not require NDK at consumption time.
 }
 
 dependencies {
+    // BlackBox Engine (optional — place BCore-release.aar in app/libs/)
+    implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.aar"))))
+
     // AndroidX Core
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)

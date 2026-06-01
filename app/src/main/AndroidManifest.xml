@@ -34,7 +34,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ShadowCore"
         android:largeHeap="true"
-        android:usesCleartextTraffic="true">
+        android:usesCleartextTraffic="true"
+        android:requestLegacyExternalStorage="true">
 
         <activity
             android:name=".MainActivity"
@@ -76,6 +77,67 @@
             android:exported="true"
             android:permission="android.permission.INTERACT_ACROSS_USERS_FULL" />
 
+        <!--
+            ═══════════════════════════════════════════════════════════════
+            BlackBox Stub Components
+            
+            These stub activities, services, and content providers are
+            required by the BlackBox virtual engine. When a guest app
+            tries to launch a component, BlackBox intercepts the request
+            and redirects it to one of these pre-registered stubs.
+            
+            The actual stub classes come from the BCore AAR library.
+            Until the AAR is added, these declarations are harmless —
+            they reference classes that don't exist yet.
+            ═══════════════════════════════════════════════════════════════
+        -->
+
+        <!-- ── Stub Activities (standard launch mode) ── -->
+        <activity android:name="com.vcore.stub.StubActivity$P00" android:exported="false" android:taskAffinity="" android:excludeFromRecents="true" android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|screenSize|smallestScreenSize|fontScale|layoutDirection|density" />
+        <activity android:name="com.vcore.stub.StubActivity$P01" android:exported="false" android:taskAffinity="" android:excludeFromRecents="true" android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|screenSize|smallestScreenSize|fontScale|layoutDirection|density" />
+        <activity android:name="com.vcore.stub.StubActivity$P02" android:exported="false" android:taskAffinity="" android:excludeFromRecents="true" android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|screenSize|smallestScreenSize|fontScale|layoutDirection|density" />
+        <activity android:name="com.vcore.stub.StubActivity$P03" android:exported="false" android:taskAffinity="" android:excludeFromRecents="true" android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|screenSize|smallestScreenSize|fontScale|layoutDirection|density" />
+        <activity android:name="com.vcore.stub.StubActivity$P04" android:exported="false" android:taskAffinity="" android:excludeFromRecents="true" android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|screenSize|smallestScreenSize|fontScale|layoutDirection|density" />
+        <activity android:name="com.vcore.stub.StubActivity$P05" android:exported="false" android:taskAffinity="" android:excludeFromRecents="true" android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|screenSize|smallestScreenSize|fontScale|layoutDirection|density" />
+        <activity android:name="com.vcore.stub.StubActivity$P06" android:exported="false" android:taskAffinity="" android:excludeFromRecents="true" android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|screenSize|smallestScreenSize|fontScale|layoutDirection|density" />
+        <activity android:name="com.vcore.stub.StubActivity$P07" android:exported="false" android:taskAffinity="" android:excludeFromRecents="true" android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|screenSize|smallestScreenSize|fontScale|layoutDirection|density" />
+        <activity android:name="com.vcore.stub.StubActivity$P08" android:exported="false" android:taskAffinity="" android:excludeFromRecents="true" android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|screenSize|smallestScreenSize|fontScale|layoutDirection|density" />
+        <activity android:name="com.vcore.stub.StubActivity$P09" android:exported="false" android:taskAffinity="" android:excludeFromRecents="true" android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|screenSize|smallestScreenSize|fontScale|layoutDirection|density" />
+
+        <!-- ── Stub Activities (singleTask launch mode) ── -->
+        <activity android:name="com.vcore.stub.StubActivity$P10" android:exported="false" android:launchMode="singleTask" android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|screenSize|smallestScreenSize|fontScale|layoutDirection|density" />
+        <activity android:name="com.vcore.stub.StubActivity$P11" android:exported="false" android:launchMode="singleTask" android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|screenSize|smallestScreenSize|fontScale|layoutDirection|density" />
+        <activity android:name="com.vcore.stub.StubActivity$P12" android:exported="false" android:launchMode="singleTask" android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|screenSize|smallestScreenSize|fontScale|layoutDirection|density" />
+        <activity android:name="com.vcore.stub.StubActivity$P13" android:exported="false" android:launchMode="singleTask" android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|screenSize|smallestScreenSize|fontScale|layoutDirection|density" />
+        <activity android:name="com.vcore.stub.StubActivity$P14" android:exported="false" android:launchMode="singleTask" android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|screenSize|smallestScreenSize|fontScale|layoutDirection|density" />
+
+        <!-- ── Stub Activities (singleTop launch mode) ── -->
+        <activity android:name="com.vcore.stub.StubActivity$P15" android:exported="false" android:launchMode="singleTop" android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|screenSize|smallestScreenSize|fontScale|layoutDirection|density" />
+        <activity android:name="com.vcore.stub.StubActivity$P16" android:exported="false" android:launchMode="singleTop" android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|screenSize|smallestScreenSize|fontScale|layoutDirection|density" />
+        <activity android:name="com.vcore.stub.StubActivity$P17" android:exported="false" android:launchMode="singleTop" android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|screenSize|smallestScreenSize|fontScale|layoutDirection|density" />
+        <activity android:name="com.vcore.stub.StubActivity$P18" android:exported="false" android:launchMode="singleTop" android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|screenSize|smallestScreenSize|fontScale|layoutDirection|density" />
+        <activity android:name="com.vcore.stub.StubActivity$P19" android:exported="false" android:launchMode="singleTop" android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|screenSize|smallestScreenSize|fontScale|layoutDirection|density" />
+
+        <!-- ── Stub Services ── -->
+        <service android:name="com.vcore.stub.StubService$P00" android:exported="false" />
+        <service android:name="com.vcore.stub.StubService$P01" android:exported="false" />
+        <service android:name="com.vcore.stub.StubService$P02" android:exported="false" />
+        <service android:name="com.vcore.stub.StubService$P03" android:exported="false" />
+        <service android:name="com.vcore.stub.StubService$P04" android:exported="false" />
+        <service android:name="com.vcore.stub.StubService$P05" android:exported="false" />
+        <service android:name="com.vcore.stub.StubService$P06" android:exported="false" />
+        <service android:name="com.vcore.stub.StubService$P07" android:exported="false" />
+        <service android:name="com.vcore.stub.StubService$P08" android:exported="false" />
+        <service android:name="com.vcore.stub.StubService$P09" android:exported="false" />
+
+        <!-- ── Stub Content Providers ── -->
+        <provider android:name="com.vcore.stub.StubContentProvider$P00" android:authorities="${applicationId}.vcore.stub.cp0" android:exported="false" />
+        <provider android:name="com.vcore.stub.StubContentProvider$P01" android:authorities="${applicationId}.vcore.stub.cp1" android:exported="false" />
+        <provider android:name="com.vcore.stub.StubContentProvider$P02" android:authorities="${applicationId}.vcore.stub.cp2" android:exported="false" />
+        <provider android:name="com.vcore.stub.StubContentProvider$P03" android:authorities="${applicationId}.vcore.stub.cp3" android:exported="false" />
+        <provider android:name="com.vcore.stub.StubContentProvider$P04" android:authorities="${applicationId}.vcore.stub.cp4" android:exported="false" />
+
     </application>
 
 </manifest>
+

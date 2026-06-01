@@ -1,12 +1,15 @@
 package com.shadowcore.app.ui.screens.container
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.shadowcore.app.engine.BlackBoxContainerEngine
+import com.shadowcore.app.engine.BootEvent
+import com.shadowcore.app.engine.ContainerEngine
 import com.shadowcore.app.engine.ContainerManager
 import com.shadowcore.app.engine.ImageManager
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -28,7 +31,12 @@ class ContainerViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val containerManager: ContainerManager,
     private val imageManager: ImageManager,
+    private val engine: ContainerEngine,
 ) : ViewModel() {
+
+    companion object {
+        private const val TAG = "ContainerViewModel"
+    }
 
     private val veId: String = savedStateHandle["veId"] ?: ""
 
@@ -36,9 +44,9 @@ class ContainerViewModel @Inject constructor(
     val state: StateFlow<ContainerUiState> = _state.asStateFlow()
 
     init {
-        // Auto-start boot sequence
+        // Auto-start boot sequence when the screen opens
         viewModelScope.launch {
-            delay(500) // Brief delay for screen transition
+            kotlinx.coroutines.delay(500) // Brief delay for screen transition
             startContainer()
         }
     }
@@ -49,47 +57,81 @@ class ContainerViewModel @Inject constructor(
         viewModelScope.launch {
             _state.update { it.copy(isBooting = true, bootProgress = 0f) }
 
-            // Simulate boot phases (will be replaced by real BlackBox boot)
-            val phases = listOf(
-                "Checking system image..." to 0.1f,
-                "Loading framework JARs..." to 0.2f,
-                "Initializing container engine..." to 0.35f,
-                "Starting Zygote process..." to 0.5f,
-                "Launching SystemServer..." to 0.65f,
-                "Starting package manager..." to 0.75f,
-                "Loading system apps..." to 0.85f,
-                "Starting launcher..." to 0.95f,
-                "Virtual Environment ready" to 1.0f,
-            )
-
-            for ((phase, progress) in phases) {
-                _state.update { it.copy(bootPhase = phase, bootProgress = progress) }
-                delay((300L..800L).random())
-            }
-
-            delay(400)
-            _state.update {
-                it.copy(
-                    isBooting = false,
-                    isRunning = true,
-                    bootPhase = "",
-                    installedApps = getDefaultApps(),
-                )
-            }
+            containerManager.startContainer(veId)
+                .collect { event ->
+                    when (event) {
+                        is BootEvent.Initializing -> {
+                            _state.update {
+                                it.copy(bootPhase = "Initializing container engine...", bootProgress = 0.15f)
+                            }
+                        }
+                        is BootEvent.LoadingFramework -> {
+                            _state.update {
+                                it.copy(bootPhase = "Loading Android framework...", bootProgress = 0.45f)
+                            }
+                        }
+                        is BootEvent.StartingServices -> {
+                            _state.update {
+                                it.copy(bootPhase = "Starting system services...", bootProgress = 0.75f)
+                            }
+                        }
+                        is BootEvent.Ready -> {
+                            _state.update {
+                                it.copy(
+                                    isBooting = false,
+                                    isRunning = true,
+                                    bootPhase = "",
+                                    bootProgress = 1f,
+                                )
+                            }
+                            // Load installed apps from the engine
+                            refreshInstalledApps()
+                        }
+                        is BootEvent.Error -> {
+                            Log.e(TAG, "Boot error: ${event.message}", event.cause)
+                            _state.update {
+                                it.copy(
+                                    isBooting = false,
+                                    isRunning = false,
+                                    errorMessage = event.message,
+                                )
+                            }
+                        }
+                    }
+                }
         }
     }
 
     fun stopContainer() {
         viewModelScope.launch {
+            try {
+                containerManager.stopContainer(veId)
+            } catch (e: Exception) {
+                Log.e(TAG, "Stop failed", e)
+            }
             _state.update { it.copy(isRunning = false, installedApps = emptyList()) }
         }
     }
 
+    /**
+     * Launches an installed app inside the virtual environment.
+     *
+     * If the engine is [BlackBoxContainerEngine], calls `launchApk()`.
+     * Otherwise logs a placeholder message.
+     */
     fun launchApp(packageName: String) {
-        // TODO: Launch app inside container via BlackBox engine
         viewModelScope.launch {
-            _state.update {
-                it.copy(errorMessage = "App launching will work after BlackBox integration")
+            Log.i(TAG, "Launching app: $packageName")
+            val bbEngine = engine as? BlackBoxContainerEngine
+            if (bbEngine != null) {
+                val success = bbEngine.launchApp(packageName)
+                if (!success) {
+                    _state.update { it.copy(errorMessage = "Failed to launch $packageName") }
+                }
+            } else {
+                _state.update {
+                    it.copy(errorMessage = "App launching requires BlackBox SDK")
+                }
             }
         }
     }
@@ -102,16 +144,45 @@ class ContainerViewModel @Inject constructor(
         _state.update { it.copy(showInstallDialog = false) }
     }
 
+    fun clearError() {
+        _state.update { it.copy(errorMessage = null) }
+    }
+
     fun onVirtualBack() {
-        // TODO: Send back event to BlackBox container
+        // TODO: Route back press to the running virtual activity
+        Log.d(TAG, "Virtual back pressed")
     }
 
     fun onVirtualHome() {
-        // TODO: Send home event to BlackBox container
+        // TODO: Route home press to virtual launcher
+        Log.d(TAG, "Virtual home pressed")
     }
 
     fun onVirtualRecents() {
-        // TODO: Send recents event to BlackBox container
+        // TODO: Route recents press to virtual recents screen
+        Log.d(TAG, "Virtual recents pressed")
+    }
+
+    /**
+     * Refreshes the installed apps list from the engine.
+     * Falls back to default system apps if the engine returns empty.
+     */
+    private fun refreshInstalledApps() {
+        viewModelScope.launch {
+            try {
+                val apps = containerManager.listInstalledApps(veId)
+                val virtualApps = if (apps.isNotEmpty()) {
+                    apps.map { VirtualApp(it.packageName, it.appName, it.versionName) }
+                } else {
+                    // Show default system apps when engine has nothing installed yet
+                    getDefaultApps()
+                }
+                _state.update { it.copy(installedApps = virtualApps) }
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to load installed apps", e)
+                _state.update { it.copy(installedApps = getDefaultApps()) }
+            }
+        }
     }
 
     private fun getDefaultApps(): List<VirtualApp> {
@@ -121,8 +192,6 @@ class ContainerViewModel @Inject constructor(
             VirtualApp("com.android.calculator2", "Calculator"),
             VirtualApp("com.android.contacts", "Contacts"),
             VirtualApp("com.android.deskclock", "Clock"),
-            VirtualApp("com.android.gallery3d", "Gallery"),
-            VirtualApp("com.android.camera2", "Camera"),
         )
     }
 }
