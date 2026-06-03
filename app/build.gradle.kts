@@ -72,8 +72,9 @@ android {
 dependencies {
     // BlackBox Engine (optional — place BCore-release.aar in app/libs/)
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.aar"))))
-
     // AndroidX Core
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.splashscreen)
